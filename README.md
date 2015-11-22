@@ -7,9 +7,15 @@ Originally (in a previous game), this project was called `anax`.
 I lost the code for that and made a new dashboard view using Angular.  
 I decided to prepend an 'x' to the name to form a palindrome and a real word.
 
+# Prerequisites
+You should have Node.js installed.
+
 # Setup
-After cloning the repo, manually add the following files to the project root directory.  
-`dump.json` - For the table  
-`intel.json` - For the chart  
-Both of these files can be retrieved using Mohammed's [NP2 Dumper](https://github.com/mohammedh123/NP2Dumper).  
-This manual process is tedious and changing it is high in priority on the [TODO list](https://github.com/emilh91/xanax/issues).
+1. `cd /path/to/xanax`
+2. `npm install`
+3. `bower install`
+4. Specify your dumps directory in line 40 of `app.js`.
+
+# Usage
+1. Run `node bin/www`.
+2. Navigate to `http://your-server:3000` in your browser.

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html ng-app="NP2D_App">
+  <head>
+  <title>NP2 Dashboard</title>
+  <link rel='stylesheet' href='/bower_components/bootstrap/dist/css/bootstrap.min.css' />
+  <link rel='stylesheet' href='/stylesheets/main.css' />
+  <script src="/bower_components/angular/angular.js"></script>
+  <script src="/javascripts/canvasjs.min.js"></script>
+  <script src="/javascripts/main.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">NP2 Dashboard</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li id="np2-navli-table"><a href="#">Table</a></li>
+            <li id="np2-navli-chart"><a href="#">Chart</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    
+    <div>
+      <div class="col-md-12">
+        <table class="table table-bordered table-condensed table-hover" ng-controller="NP2D_Table">
+          <thead>
+            <tr>
+              <th>&nbsp;</th>
+              <th class="text-center" ng-repeat="ctg in categories" colspan="{{ctg.fields.length}}">{{ctg.name}}</th>
+            </tr>
+            <tr>
+              <th class="text-right">#</th>
+              <th class="text-center" ng-repeat="field in fields" ng-class="field.sortField==sortField?'selected':''">
+                <a href="#" ng-click="sortBy(field.sortField)" title="{{field.hasOwnProperty('title')?field.title:''}}">{{field.name}}</a>
+                <span ng-show="sortField==field.sortField" ng-class="triangleClass()"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="item in players | orderBy:sortField:sortDesc" ng-click="viewWRT(item)" ng-class="item==wrt?'selected':''">
+              <!-- General -->
+              <td class="text-right">{{$index+1}}</td>
+              <td class="text-right">{{item.uid}}</td>
+              <td>
+                <span ng-class="ringClassFor(item)"></span>
+                <span ng-class="playerNameClassFor(item)">{{item.alias}}</span>
+                <span class="glyphicon glyphicon-star" ng-show="item==admin" title="This player is the game admin."></span>
+                <span class="pull-right">
+                  <span class="badge" ng-class="item.missed_turns>0?'':'invisible'" title="This player has missed {{item.missed_turns}} turn(s).">{{item.missed_turns}}</span>
+                  <span class="glyphicon glyphicon-ok" ng-class="item.ai||item.ready?'':'invisible'" title="{{readyTitleFor(item)}}"></span>
+                </span>
+              </td>
+              <!-- Empire -->
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'total_stars')">{{item.total_stars}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'total_strength')">{{item.total_strength}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'total_fleets')">{{item.total_fleets}}</span></td>
+              <!-- Yield -->
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'sph')">{{item.sph|number:2}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'cpc')">{{item.cpc}}</span></td>
+              <!-- Infrastructure -->
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'total_economy')">{{item.total_economy}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'total_industry')">{{item.total_industry}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'total_science')">{{item.total_science}}</span></td>
+              <!-- Technology -->
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'tech.scanning.level')">{{item.tech.scanning.level}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'tech.propulsion.level')">{{item.tech.propulsion.level}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'tech.terraforming.level')">{{item.tech.terraforming.level}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'tech.research.level')">{{item.tech.research.level}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'tech.weapons.level')">{{item.tech.weapons.level}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'tech.banking.level')">{{item.tech.banking.level}}</span></td>
+              <td class="text-right"><span class="pull-right" ng-class="statClassFor(item,'tech.manufacturing.level')">{{item.tech.manufacturing.level}}</span></td>
+            <tr>
+          </tbody>
+          <tfoot>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    
+    <div ng-controller="NP2D_Chart">
+      <div class="col-md-2">
+        <div class="btn-group-vertical">
+          <button type="button" class="btn btn-default" ng-class="$index==fieldIndex?'active':''" ng-click="changeCriterion($index)" ng-repeat="item in criteria" title="{{item.alt||''}}">{{item.title}}</button>
+        </div>
+      </div>
+      
+      <div class="col-md-7">
+        <div id="chartContainer"></div>
+      </div>
+      
+      <div class="col-md-1">
+        <div class="btn-group-vertical">
+          <button type="button" class="btn btn-default" ng-class="playerIndexes.indexOf(item.uid)==-1?'':'active'" ng-click="togglePlayer(item.uid)" ng-repeat="item in stats[0].players|limitTo:12">Player UID {{item.uid}}</button>
+        </div>
+      </div>
+      
+      <div class="col-md-1">
+        <div class="btn-group-vertical" style="margin-left:7px;">
+          <button type="button" class="btn btn-default" ng-class="playerIndexes.indexOf(item.uid)==-1?'':'active'" ng-click="togglePlayer(item.uid)" ng-repeat="item in stats[0].players|limitTo:12:12">Player UID {{item.uid}}</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

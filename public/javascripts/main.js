@@ -125,7 +125,8 @@ app.controller('NP2D_Chart', function($scope, $http) {
         $scope.chart.render();
     }
     
-    $http.get('intel.json').success(function(data) {
+    var gameid = document.location.href.split('/').slice(-1)[0].split('#')[0];
+    $http.get('/'+gameid+'/intel').success(function(data) {
         $scope.stats = data.report.stats;
         $scope.fieldIndex = 0;
         $scope.playerIndexes = [];
@@ -191,7 +192,8 @@ app.controller('NP2D_Table', function($scope, $http) {
     }
     $scope.fields = fields;
     
-    $http.get('dump.json').success(function(data) {
+    var gameid = document.location.href.split('/').slice(-1)[0].split('#')[0];
+    $http.get('/'+gameid+'/state/latest').success(function(data) {
         var players = [];
         for (var i in data.report.players) {
             var pl = data.report.players[i];

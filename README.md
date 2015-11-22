@@ -19,4 +19,4 @@ You should also have Bower installed (globally): `npm install -g bower`
 
 # Usage
 1. Run `node bin/www`.
-2. Navigate to `http://your-server:3000` in your browser.
+2. Navigate to `http://<your-server>:3000/<game-id>` in your browser.

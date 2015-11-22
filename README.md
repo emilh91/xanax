@@ -8,7 +8,8 @@ I lost the code for that and made a new dashboard view using Angular.
 I decided to prepend an 'x' to the name to form a palindrome and a real word.
 
 # Prerequisites
-You should have Node.js installed.
+You should have Node.js installed.  
+You should also have Bower installed (globally): `npm install -g bower`
 
 # Setup
 1. `cd /path/to/xanax`

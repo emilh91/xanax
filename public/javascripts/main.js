@@ -20,6 +20,7 @@ app.controller('NP2D_Chart', function($scope, $http) {
         theme: "theme2",
         axisX: {
             title: "Tick",
+            labelAngle: -30,
             interval: 6
         },
         legend:{
@@ -121,6 +122,9 @@ app.controller('NP2D_Chart', function($scope, $http) {
             data.push($scope.getDataPointsFor(idx));
         }
         
+        $scope.chart.options.axisY = {
+            title: $scope.criteria[$scope.fieldIndex].title,
+        };
         $scope.chart.options.data = data;
         $scope.chart.render();
     }
